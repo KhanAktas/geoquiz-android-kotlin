@@ -1,4 +1,4 @@
-package com.khanaktas.geoquiz
+package com.khanaktas.geoquiz.model
 
 import androidx.annotation.StringRes
 

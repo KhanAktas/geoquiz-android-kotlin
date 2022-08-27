@@ -5,12 +5,14 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.khanaktas.geoquiz.model.Question
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var questionTextView: TextView
     private lateinit var trueButton: Button
     private lateinit var falseButton: Button
+    private lateinit var previousButton: Button
     private lateinit var nextButton: Button
 
     private val questionBank = listOf(
@@ -31,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         questionTextView = findViewById(R.id.question_text_view)
         trueButton = findViewById(R.id.true_button)
         falseButton = findViewById(R.id.false_button)
+        previousButton = findViewById(R.id.previos_button)
         nextButton = findViewById(R.id.next_button)
 
         trueButton.setOnClickListener {
@@ -39,6 +42,19 @@ class MainActivity : AppCompatActivity() {
 
         falseButton.setOnClickListener {
             checkAnswer(false)
+        }
+
+        previousButton.setOnClickListener {
+            if (currentIndex > 0) {
+                currentIndex = (currentIndex - 1) % questionBank.size
+                updateQuestion()
+            } else {
+                Toast.makeText(
+                    this,
+                    "Nothing there",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
 
         nextButton.setOnClickListener {
@@ -54,10 +70,10 @@ class MainActivity : AppCompatActivity() {
         questionTextView.setText(questionTextResId)
     }
 
-    private fun checkAnswer(userAnswer: Boolean){
+    private fun checkAnswer(userAnswer: Boolean) {
         val correctAnswer = questionBank[currentIndex].answer
 
-        val messageResId = if (userAnswer == correctAnswer){
+        val messageResId = if (userAnswer == correctAnswer) {
             R.string.correct_toast
         } else {
             R.string.incorrect_toast
