@@ -1,4 +1,4 @@
-package com.khanaktas.geoquiz
+package com.khanaktas.geoquiz.activity
 
 import android.os.Bundle
 import android.util.Log
@@ -6,6 +6,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.khanaktas.geoquiz.R
 import com.khanaktas.geoquiz.model.Question
 
 private const val TAG = "MainActivity"
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     )
 
     private var currentIndex = 0
+    private var answered = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +54,7 @@ class MainActivity : AppCompatActivity() {
             if (currentIndex > 0) {
                 currentIndex = (currentIndex - 1) % questionBank.size
                 updateQuestion()
+                answered = false
             } else {
                 Toast.makeText(
                     this,
@@ -64,6 +67,7 @@ class MainActivity : AppCompatActivity() {
         nextButton.setOnClickListener {
             currentIndex = (currentIndex + 1) % questionBank.size
             updateQuestion()
+            answered = false
         }
 
         updateQuestion()
@@ -94,21 +98,28 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "onDestroy")
     }
 
+    private fun checkAnswer(userAnswer: Boolean) {
+        if (!answered) {
+            answered = true
+            val correctAnswer = questionBank[currentIndex].correctAnswer
+
+            val messageResId = if (userAnswer == correctAnswer) {
+                R.string.correct_toast
+            } else {
+                R.string.incorrect_toast
+            }
+
+
+            Toast.makeText(this, messageResId, Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            Toast.makeText(this, "You already answered this question", Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
+
     private fun updateQuestion() {
         val questionTextResId = questionBank[currentIndex].textResId
         questionTextView.setText(questionTextResId)
-    }
-
-    private fun checkAnswer(userAnswer: Boolean) {
-        val correctAnswer = questionBank[currentIndex].answer
-
-        val messageResId = if (userAnswer == correctAnswer) {
-            R.string.correct_toast
-        } else {
-            R.string.incorrect_toast
-        }
-
-        Toast.makeText(this, messageResId, Toast.LENGTH_SHORT)
-            .show()
     }
 }
